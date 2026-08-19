@@ -1,0 +1,1648 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>美芙瀧 | 專業美容 × 教育 × 經營 (20260819.v0版)</title>
+    
+    <!-- Google Fonts: Noto Sans TC for content, Noto Serif TC & Playfair Display for headers -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Phosphor Icons for elegant line icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            DEFAULT: '#C5A880',
+                            light: '#E6D5B8',
+                            dark: '#A3865D'
+                        },
+                        brand: {
+                            light: '#FDFBF7',
+                            dark: '#2C2A29',
+                            gray: '#8A8683',
+                            rose: '#E8E0DE'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                        serif: ['"Noto Serif TC"', '"Playfair Display"', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .glass-nav {
+            background: rgba(253, 251, 247, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+        }
+        .section-padding {
+            padding-top: 5rem;
+            padding-bottom: 5rem;
+        }
+        .text-shadow {
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        .image-overlay::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to bottom, rgba(44,42,41,0.35), rgba(44,42,41,0.75));
+            z-index: 1;
+        }
+        .fade-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .modal-backdrop {
+            background: rgba(15, 15, 15, 0.65);
+            backdrop-filter: blur(8px);
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #C5A880;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="font-sans text-brand-dark bg-brand-light antialiased selection:bg-gold selection:text-white">
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed top-5 right-5 z-[100] flex flex-col gap-3 pointer-events-none"></div>
+
+    <!-- Navigation Bar -->
+    <nav id="navbar" class="fixed w-full z-40 transition-all duration-300 py-4">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center">
+                <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+                    <span class="font-serif text-2xl font-bold text-brand-dark tracking-widest">美芙瀧</span>
+                    <span class="ml-2 text-xs text-brand-gray hidden sm:block tracking-widest border-l border-brand-gray/40 pl-2">MEFULLON</span>
+                </div>
+                <div class="hidden md:flex space-x-6 items-center">
+                    <a href="#services" class="text-sm tracking-wide hover:text-gold transition-colors">我們能做什麼</a>
+                    <a href="#products" class="text-sm tracking-wide hover:text-gold transition-colors">明星產品</a>
+                    <a href="#courses" class="text-sm tracking-wide hover:text-gold transition-colors">專業課程</a>
+                    <a href="#why-us" class="text-sm tracking-wide hover:text-gold transition-colors">為什麼選擇我們</a>
+                    <a href="#knowledge" class="text-sm tracking-wide hover:text-gold transition-colors">經營知識</a>
+                    <a href="#events" class="text-sm tracking-wide hover:text-gold transition-colors">最新活動</a>
+                    <a href="#contact" class="bg-brand-dark text-white px-5 py-2 rounded-full text-sm hover:bg-gold transition-colors shadow-sm">合作洽詢</a>
+                    
+                    <!-- Admin Button in Nav -->
+                    <button onclick="openAdminModal()" class="flex items-center gap-1 text-xs bg-gold/15 text-gold-dark hover:bg-gold hover:text-white px-3 py-1.5 rounded-lg border border-gold/30 transition-all font-medium">
+                        <i class="ph ph-sliders text-base"></i> 後台管理
+                    </button>
+                </div>
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center gap-2">
+                    <button onclick="openAdminModal()" class="text-xs bg-gold/10 text-gold-dark px-2.5 py-1.5 rounded-lg border border-gold/30 flex items-center gap-1">
+                        <i class="ph ph-sliders"></i> 後台
+                    </button>
+                    <button id="mobile-menu-btn" class="text-brand-dark focus:outline-none p-1">
+                        <i class="ph ph-list text-3xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-brand-light border-t border-gray-100 absolute w-full shadow-lg">
+            <div class="px-4 pt-3 pb-4 space-y-2 text-center">
+                <a href="#services" class="block py-2 text-base font-medium text-brand-dark hover:text-gold">我們能做什麼</a>
+                <a href="#products" class="block py-2 text-base font-medium text-brand-dark hover:text-gold">明星產品</a>
+                <a href="#courses" class="block py-2 text-base font-medium text-brand-dark hover:text-gold">專業課程</a>
+                <a href="#why-us" class="block py-2 text-base font-medium text-brand-dark hover:text-gold">為什麼選擇我們</a>
+                <a href="#knowledge" class="block py-2 text-base font-medium text-brand-dark hover:text-gold">經營知識</a>
+                <a href="#events" class="block py-2 text-base font-medium text-brand-dark hover:text-gold">最新活動</a>
+                <a href="#contact" class="block py-2 text-base font-medium text-gold">加入 LINE 諮詢</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 01｜第一屏 品牌主視覺 (圖片可由後台置換) -->
+    <header class="relative h-screen flex items-center justify-center overflow-hidden image-overlay" id="home">
+        <img id="hero-bg-img" src="" alt="Spa Beauty Hero" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500">
+        
+        <div class="relative z-10 text-center px-4 fade-up">
+            <p class="text-gold-light tracking-[0.25em] mb-4 text-sm md:text-base font-serif italic">Elevate Your Beauty Business</p>
+            <h1 class="text-4xl md:text-6xl lg:text-7xl text-white font-serif tracking-widest mb-6 text-shadow font-light">
+                專業美容 <span class="text-gold mx-1 md:mx-2">×</span> 教育 <span class="text-gold mx-1 md:mx-2">×</span> 經營
+            </h1>
+            <p class="text-white/90 text-base md:text-xl tracking-wide max-w-2xl mx-auto mb-10 font-light text-shadow leading-relaxed">
+                從產品、技術到行銷，我們是您沙龍事業的最強後盾。<br class="hidden md:block">全方位系統化資源，助您打造高獲利美業生態圈。
+            </p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="#services" class="inline-block border border-white text-white px-8 py-3 rounded-full tracking-widest hover:bg-white hover:text-brand-dark transition-all duration-300">
+                    探索服務
+                </a>
+                <button onclick="openAdminModal('site-images')" class="inline-block bg-gold/80 backdrop-blur-md text-white border border-gold-light px-8 py-3 rounded-full tracking-widest hover:bg-gold transition-all duration-300">
+                    <i class="ph ph-image mr-1"></i> 置換全站圖片
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 02｜我們能為美容店家做什麼 -->
+    <section id="services" class="section-padding bg-brand-light">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 fade-up">
+                <span class="text-gold font-serif italic tracking-widest text-sm">Our Services</span>
+                <h2 class="text-3xl md:text-4xl font-serif text-brand-dark mt-2 mb-4 tracking-widest">我們能為美容店家做什麼</h2>
+                <div class="w-12 h-0.5 bg-gold mx-auto"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- 產品 -->
+                <div class="group bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 fade-up border border-gray-100">
+                    <div class="w-16 h-16 bg-brand-rose/60 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="ph ph-drop text-3xl text-brand-dark"></i>
+                    </div>
+                    <h3 class="text-xl font-serif mb-3 tracking-wide">產品支持</h3>
+                    <p class="text-brand-gray text-sm leading-relaxed">提供符合高標準檢驗的高效能保養品，品質穩定、效果顯著，成為您服務顧客的最佳利器。</p>
+                </div>
+                <!-- 技術 -->
+                <div class="group bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 fade-up border border-gray-100" style="transition-delay: 100ms;">
+                    <div class="w-16 h-16 bg-brand-rose/60 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="ph ph-sparkle text-3xl text-brand-dark"></i>
+                    </div>
+                    <h3 class="text-xl font-serif mb-3 tracking-wide">技術指導</h3>
+                    <p class="text-brand-gray text-sm leading-relaxed">獨家專利手法與前沿美容儀器教學，讓您的服務具備市場差異化與不可取代性。</p>
+                </div>
+                <!-- 教育 -->
+                <div class="group bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 fade-up border border-gray-100" style="transition-delay: 200ms;">
+                    <div class="w-16 h-16 bg-brand-rose/60 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="ph ph-book-open-text text-3xl text-brand-dark"></i>
+                    </div>
+                    <h3 class="text-xl font-serif mb-3 tracking-wide">教育培訓</h3>
+                    <p class="text-brand-gray text-sm leading-relaxed">從基礎美容師到高階店長，提供完整晉升教育系統，解決店家培訓與留才痛點。</p>
+                </div>
+                <!-- 行銷 -->
+                <div class="group bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 fade-up border border-gray-100" style="transition-delay: 300ms;">
+                    <div class="w-16 h-16 bg-brand-rose/60 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="ph ph-chart-line-up text-3xl text-brand-dark"></i>
+                    </div>
+                    <h3 class="text-xl font-serif mb-3 tracking-wide">行銷經營</h3>
+                    <p class="text-brand-gray text-sm leading-relaxed">線上集客導流、線下留客方案、定價策略制定，手把手協助您打造穩定獲利模式。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 03｜明星產品 【可由後台動態換圖與編輯文案】 -->
+    <section id="products" class="section-padding bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 fade-up gap-4">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-gold font-serif italic tracking-widest text-sm">Star Products</span>
+                        <span class="text-xs bg-gold/10 text-gold-dark px-2 py-0.5 rounded border border-gold/20 font-sans">CMS 產品管理</span>
+                    </div>
+                    <h2 class="text-3xl md:text-4xl font-serif text-brand-dark mt-2 tracking-widest">明星產品系列</h2>
+                    <p class="text-brand-gray mt-2 text-sm">以科學為本，為肌膚注入源源不絕的賦活能量，店家沙龍必備人氣配方。</p>
+                </div>
+                <div>
+                    <button onclick="openAdminModal('products')" class="text-xs bg-gold/10 text-gold-dark border border-gold/30 px-3.5 py-2 rounded-lg hover:bg-gold hover:text-white transition-all shadow-sm font-medium">
+                        <i class="ph ph-plus-circle"></i> 上架/管理產品
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dynamic Products Container -->
+            <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Rendered dynamically via JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 04｜專業課程 (圖片可由後台置換) -->
+    <section id="courses" class="section-padding bg-brand-rose/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col lg:flex-row gap-16 items-center">
+                <div class="lg:w-1/2 fade-up">
+                    <span class="text-gold font-serif italic tracking-widest text-sm">Professional Courses</span>
+                    <h2 class="text-3xl md:text-4xl font-serif text-brand-dark mt-2 mb-6 tracking-widest">專業課程系統</h2>
+                    <p class="text-brand-gray mb-8 leading-relaxed">
+                        美芙瀧深知「人才」是沙龍經營的核心。我們設計了由淺入深的漸進式課程，不只教技術，更教您如何留客、如何締結。
+                    </p>
+                    
+                    <div class="space-y-6">
+                        <div class="flex items-start">
+                            <div class="w-10 h-10 rounded-full bg-white shadow flex items-center justify-center flex-shrink-0 mr-4">
+                                <span class="text-gold font-serif font-bold">01</span>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-medium mb-1 tracking-wide">小白啟航計畫</h4>
+                                <p class="text-sm text-brand-gray">零基礎美容師快速上手，標準化流程（SOP）訓練。</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="w-10 h-10 rounded-full bg-white shadow flex items-center justify-center flex-shrink-0 mr-4">
+                                <span class="text-gold font-serif font-bold">02</span>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-medium mb-1 tracking-wide">高階技術突破</h4>
+                                <p class="text-sm text-brand-gray">問題肌膚處理、特殊撥筋手法、儀器搭配高階應用。</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="w-10 h-10 rounded-full bg-white shadow flex items-center justify-center flex-shrink-0 mr-4">
+                                <span class="text-gold font-serif font-bold">03</span>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-medium mb-1 tracking-wide">店長經營管理</h4>
+                                <p class="text-sm text-brand-gray">業績目標設定、店務管理、員工考核與激勵制度。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="lg:w-1/2 w-full fade-up relative">
+                    <div class="absolute -inset-4 bg-gold/10 transform rotate-3 rounded-2xl"></div>
+                    <img id="courses-bg-img" src="" 
+                         alt="Beauty Course Image" class="relative rounded-2xl shadow-xl w-full object-cover aspect-[4/3] transition-all duration-500">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 05｜店家合作 (背景圖可由後台置換) -->
+    <section class="relative py-24 bg-brand-dark overflow-hidden">
+        <div class="absolute inset-0 opacity-25">
+            <img id="cta-bg-img" src="" alt="Texture BG" class="w-full h-full object-cover transition-all duration-500">
+        </div>
+        <div class="relative z-10 max-w-4xl mx-auto px-4 text-center fade-up">
+            <h2 class="text-3xl md:text-5xl font-serif text-white mb-6 tracking-widest leading-tight">
+                成為美芙瀧合作夥伴
+            </h2>
+            <p class="text-gold-light text-base md:text-lg mb-10 tracking-wide font-light">
+                不只是買賣關係，更是您創業路上的得力合夥人。<br class="hidden md:block">
+                立即加入，解鎖專屬店家優惠、免費課程與行銷資源。
+            </p>
+            <a href="#contact" class="inline-block bg-gold hover:bg-gold-light text-brand-dark font-medium px-10 py-4 rounded-full tracking-widest transition-colors duration-300 shadow-lg">
+                了解加盟/合作方案
+            </a>
+        </div>
+    </section>
+
+    <!-- 06｜為什麼選擇我們 【可由後台動態更新】 -->
+    <section id="why-us" class="section-padding bg-white relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 fade-up">
+                <div class="flex items-center justify-center gap-2">
+                    <span class="text-gold font-serif italic tracking-widest text-sm">Why Choose Us</span>
+                    <span class="text-xs bg-gold/10 text-gold-dark px-2 py-0.5 rounded border border-gold/20 font-sans">CMS 優勢管理</span>
+                </div>
+                <h2 class="text-3xl md:text-4xl font-serif text-brand-dark mt-2 mb-4 tracking-widest">為什麼選擇我們</h2>
+                <p class="text-brand-gray text-sm max-w-xl mx-auto">美芙瀧整合優勢，打造不可替代的店家核心競爭力</p>
+                <div class="w-12 h-0.5 bg-gold mx-auto mt-4"></div>
+            </div>
+
+            <!-- Dynamic Grid Container -->
+            <div id="whyus-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Rendered dynamically via JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 07｜美容經營知識 【可由後台動態更新】 -->
+    <section id="knowledge" class="section-padding bg-brand-light border-t border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 fade-up gap-4">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-gold font-serif italic tracking-widest text-sm">Knowledge Base</span>
+                        <span class="text-xs bg-gold/10 text-gold-dark px-2 py-0.5 rounded border border-gold/20 font-sans">CMS 文章發布</span>
+                    </div>
+                    <h2 class="text-3xl md:text-4xl font-serif text-brand-dark mt-2 tracking-widest">美容經營知識</h2>
+                    <p class="text-brand-gray mt-2 text-sm">累積教學實戰經驗，打造 Google 搜尋高權重文章生態網</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="openAdminModal('knowledge')" class="text-xs bg-white text-gold-dark border border-gold/40 px-3 py-2 rounded-lg hover:bg-gold hover:text-white transition-all shadow-sm">
+                        <i class="ph ph-plus"></i> 新增/發布文章
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dynamic Articles Grid -->
+            <div id="knowledge-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Rendered dynamically via JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 08｜最新活動 【可由後台動態更新】 -->
+    <section id="events" class="section-padding bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 fade-up">
+                <div class="flex items-center justify-center gap-2">
+                    <span class="text-gold font-serif italic tracking-widest text-sm">Latest Events</span>
+                    <span class="text-xs bg-gold/10 text-gold-dark px-2 py-0.5 rounded border border-gold/20 font-sans">CMS 活動看板</span>
+                </div>
+                <h2 class="text-3xl md:text-4xl font-serif text-brand-dark mt-2 mb-4 tracking-widest">最新活動</h2>
+                <p class="text-brand-gray text-sm">掌握美容趨勢論壇、線下研討會與實戰培訓第一手資訊</p>
+                <div class="w-12 h-0.5 bg-gold mx-auto mt-4"></div>
+            </div>
+
+            <!-- Dynamic Events Container -->
+            <div id="events-container" class="space-y-8">
+                <!-- Rendered dynamically via JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 09｜加入LINE／合作洽詢 (Footer) -->
+    <footer id="contact" class="bg-brand-dark text-white pt-20 pb-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+                <!-- Brand Info -->
+                <div class="lg:col-span-1">
+                    <span class="font-serif text-3xl font-bold tracking-widest mb-4 inline-block">美芙瀧</span>
+                    <p class="text-gray-400 text-sm leading-relaxed mb-6">
+                        專業美容 × 教育 × 經營<br>
+                        您的全方位美容事業最佳推手
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-gold transition-colors"><i class="ph ph-facebook-logo text-2xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-gold transition-colors"><i class="ph ph-instagram-logo text-2xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-gold transition-colors"><i class="ph ph-line-logo text-2xl"></i></a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="text-lg font-serif mb-6 tracking-widest border-b border-gray-700 pb-2">快速連結</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#services" class="text-gray-400 hover:text-gold transition-colors text-sm">我們能做什麼</a></li>
+                        <li><a href="#products" class="text-gray-400 hover:text-gold transition-colors text-sm">明星產品系列</a></li>
+                        <li><a href="#courses" class="text-gray-400 hover:text-gold transition-colors text-sm">專業教育課程</a></li>
+                        <li><a href="#why-us" class="text-gray-400 hover:text-gold transition-colors text-sm">為什麼選擇我們</a></li>
+                        <li><a href="#knowledge" class="text-gray-400 hover:text-gold transition-colors text-sm">美容經營專欄</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="lg:col-span-2 bg-white/5 p-8 rounded-2xl border border-white/10 relative overflow-hidden">
+                    <div class="absolute -right-10 -bottom-10 opacity-10">
+                        <i class="ph ph-envelope-simple text-9xl text-white"></i>
+                    </div>
+                    
+                    <h4 class="text-xl font-serif mb-4 tracking-widest text-gold-light">準備好升級您的沙龍事業了嗎？</h4>
+                    <p class="text-gray-300 text-sm mb-6">無論是產品引進、課程諮詢或加盟合作，歡迎隨時與我們聯繫。</p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="#" target="_blank" class="flex-1 flex items-center justify-center gap-2 bg-[#06C755] hover:bg-[#05b34c] text-white px-6 py-3 rounded-full font-medium transition-colors shadow-lg">
+                            <i class="ph ph-chat-circle-dots text-xl"></i>
+                            加入官方 LINE 諮詢
+                        </a>
+                        <a href="mailto:service@mefullon.com.tw" class="flex-1 flex items-center justify-center gap-2 border border-white/30 hover:border-white text-white px-6 py-3 rounded-full font-medium transition-colors">
+                            <i class="ph ph-envelope text-xl"></i>
+                            填寫合作表單
+                        </a>
+                    </div>
+                    
+                    <div class="mt-6 space-y-2 text-sm text-gray-400">
+                        <p><i class="ph ph-phone mr-2"></i> 客服專線：0800-888-999</p>
+                        <p><i class="ph ph-clock mr-2"></i> 服務時間：週一至週五 09:00 - 18:00</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Copyright -->
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500 gap-4">
+                <p>&copy; 2026 美芙瀧 Mefullon. All rights reserved.</p>
+                <div class="flex items-center space-x-4">
+                    <a href="#" class="hover:text-gray-300">隱私權政策</a>
+                    <a href="#" class="hover:text-gray-300">服務條款</a>
+                    <button onclick="openAdminModal()" class="text-gold hover:underline flex items-center gap-1">
+                        <i class="ph ph-lock-key"></i> 後台登入
+                    </button>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Floating Admin Button -->
+    <div class="fixed bottom-6 right-6 z-40">
+        <button onclick="openAdminModal()" class="bg-brand-dark text-gold border border-gold/40 hover:bg-gold hover:text-white p-3.5 rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 group hover:scale-105" title="開啟後台管理系統">
+            <i class="ph ph-gear-six text-2xl group-hover:rotate-90 transition-transform duration-500"></i>
+        </button>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- FRONTEND MODAL 1: Article Reading Window   -->
+    <!-- ========================================== -->
+    <div id="article-read-modal" class="fixed inset-0 z-50 hidden modal-backdrop flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl transition-all duration-300">
+            <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-brand-light">
+                <div class="flex items-center gap-2">
+                    <span id="modal-article-category" class="bg-brand-rose/60 text-brand-dark text-xs px-3 py-1 rounded-full font-medium">分類</span>
+                    <span id="modal-article-date" class="text-xs text-brand-gray">2026.01.01</span>
+                </div>
+                <button onclick="closeArticleModal()" class="text-brand-gray hover:text-brand-dark text-2xl p-1 rounded-full hover:bg-gray-200/50">
+                    <i class="ph ph-x"></i>
+                </button>
+            </div>
+            <div class="p-6 md:p-8 overflow-y-auto space-y-6">
+                <h2 id="modal-article-title" class="text-2xl md:text-3xl font-serif text-brand-dark leading-snug">文章標題</h2>
+                <div class="aspect-[16/9] rounded-2xl overflow-hidden bg-gray-100">
+                    <img id="modal-article-img" src="" alt="Article cover" class="w-full h-full object-cover">
+                </div>
+                <div id="modal-article-body" class="prose max-w-none text-brand-dark leading-relaxed space-y-4 text-base">
+                    <!-- Article full text -->
+                </div>
+            </div>
+            <div class="p-4 border-t border-gray-100 bg-gray-50 flex justify-between items-center">
+                <span class="text-xs text-brand-gray">美芙瀧經營專欄 · 輔導店家必讀系列</span>
+                <button onclick="closeArticleModal()" class="bg-brand-dark text-white px-6 py-2 rounded-full text-sm hover:bg-gold transition-colors">
+                    關閉文章
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- FRONTEND MODAL 2: Product Detail Window    -->
+    <!-- ========================================== -->
+    <div id="product-read-modal" class="fixed inset-0 z-50 hidden modal-backdrop flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl transition-all duration-300">
+            <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-brand-light">
+                <div class="flex items-center gap-2">
+                    <span id="modal-product-badge" class="bg-gold text-white text-xs px-3 py-1 rounded-full font-medium">明星熱銷</span>
+                    <span id="modal-product-price" class="text-xs text-gold-dark border border-gold/30 px-2.5 py-0.5 rounded font-mono">容量/規格</span>
+                </div>
+                <button onclick="closeProductModal()" class="text-brand-gray hover:text-brand-dark text-2xl p-1 rounded-full hover:bg-gray-200/50">
+                    <i class="ph ph-x"></i>
+                </button>
+            </div>
+            <div class="p-6 md:p-8 overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                <div class="aspect-[4/5] rounded-2xl overflow-hidden bg-gray-100 border border-gray-100">
+                    <img id="modal-product-img" src="" alt="Product view" class="w-full h-full object-cover">
+                </div>
+                <div class="space-y-4">
+                    <h2 id="modal-product-title" class="text-2xl font-serif text-brand-dark font-bold leading-snug">產品名稱</h2>
+                    <p id="modal-product-subtitle" class="text-sm text-gold-dark font-medium italic">產品副標題</p>
+                    <div class="w-10 h-0.5 bg-gold/50"></div>
+                    <div id="modal-product-desc" class="text-brand-dark text-sm leading-relaxed space-y-3 pt-2">
+                        <!-- Product detail content -->
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 border-t border-gray-100 bg-gray-50 flex flex-col sm:flex-row justify-between items-center gap-3">
+                <span class="text-xs text-brand-gray">店家採購與原廠加盟代理請點擊右側諮詢</span>
+                <a id="modal-product-inquire-btn" href="#contact" onclick="closeProductModal()" class="w-full sm:w-auto bg-[#06C755] hover:bg-[#05b34c] text-white px-6 py-2.5 rounded-full text-sm font-medium flex items-center justify-center gap-2 transition-colors shadow">
+                    <i class="ph ph-chat-circle-dots text-lg"></i>
+                    LINE 諮詢此產品
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- BACKEND CMS ADMIN MODAL DASHBOARD          -->
+    <!-- ========================================== -->
+    <div id="admin-modal" class="fixed inset-0 z-50 hidden modal-backdrop flex items-center justify-center p-2 sm:p-4">
+        <div class="bg-white rounded-3xl max-w-5xl w-full h-[92vh] flex flex-col shadow-2xl overflow-hidden border border-gray-200">
+            
+            <!-- Admin Header -->
+            <div class="bg-brand-dark text-white p-5 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gold/20 flex items-center justify-center text-gold text-xl border border-gold/30">
+                        <i class="ph ph-sliders-horizontal"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-serif text-lg tracking-wider text-white flex items-center gap-2">
+                            美芙瀧 MEFULLON 後台管理系統
+                            <span class="text-[10px] font-sans font-normal bg-gold text-brand-dark px-2 py-0.5 rounded-full">v3.0 Dynamic Images & Products</span>
+                        </h3>
+                        <p class="text-xs text-gray-400 font-sans">隨時修改全站 Banner 大圖、03明星產品、06優勢、07專欄文章與08最新活動</p>
+                    </div>
+                </div>
+                <button onclick="closeAdminModal()" class="text-gray-400 hover:text-white text-2xl p-2 rounded-xl hover:bg-white/10 transition-colors">
+                    <i class="ph ph-x"></i>
+                </button>
+            </div>
+
+            <!-- Admin Nav Tabs -->
+            <div class="bg-brand-light border-b border-gray-200 px-6 pt-3 flex space-x-2 overflow-x-auto text-sm font-medium">
+                <button id="tab-btn-site-images" onclick="switchAdminTab('site-images')" class="tab-btn px-4 py-3 border-b-2 border-gold text-gold font-semibold flex items-center gap-2 transition-all whitespace-nowrap">
+                    <i class="ph ph-image text-lg"></i> 全站大圖設定
+                </button>
+                <button id="tab-btn-products" onclick="switchAdminTab('products')" class="tab-btn px-4 py-3 border-b-2 border-transparent text-brand-gray hover:text-brand-dark flex items-center gap-2 transition-all whitespace-nowrap">
+                    <i class="ph ph-package text-lg"></i> 03 明星產品管理
+                </button>
+                <button id="tab-btn-whyus" onclick="switchAdminTab('whyus')" class="tab-btn px-4 py-3 border-b-2 border-transparent text-brand-gray hover:text-brand-dark flex items-center gap-2 transition-all whitespace-nowrap">
+                    <i class="ph ph-medal text-lg"></i> 06 為什麼選擇我們
+                </button>
+                <button id="tab-btn-knowledge" onclick="switchAdminTab('knowledge')" class="tab-btn px-4 py-3 border-b-2 border-transparent text-brand-gray hover:text-brand-dark flex items-center gap-2 transition-all whitespace-nowrap">
+                    <i class="ph ph-article text-lg"></i> 07 美容經營文章
+                </button>
+                <button id="tab-btn-events" onclick="switchAdminTab('events')" class="tab-btn px-4 py-3 border-b-2 border-transparent text-brand-gray hover:text-brand-dark flex items-center gap-2 transition-all whitespace-nowrap">
+                    <i class="ph ph-calendar-check text-lg"></i> 08 最新活動看板
+                </button>
+                <button id="tab-btn-settings" onclick="switchAdminTab('settings')" class="tab-btn px-4 py-3 border-b-2 border-transparent text-brand-gray hover:text-brand-dark flex items-center gap-2 transition-all whitespace-nowrap">
+                    <i class="ph ph-arrow-counter-clockwise text-lg"></i> 系統重置
+                </button>
+            </div>
+
+            <!-- Admin Body Scrollable Content -->
+            <div class="p-6 overflow-y-auto flex-1 bg-gray-50/50">
+
+                <!-- TAB 0: 全站圖片設定 (01, 04, 05) -->
+                <div id="tab-content-site-images" class="space-y-6">
+                    <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-6">
+                        <div>
+                            <h4 class="font-serif font-bold text-lg text-brand-dark">置換全站首頁大圖與區塊背景</h4>
+                            <p class="text-xs text-brand-gray">您可以填入 Unsplash 或網路上的圖片 URL 連結，儲存後前台圖片會自動更新。</p>
+                        </div>
+
+                        <form id="site-images-form" onsubmit="handleSiteImagesSave(event)" class="space-y-6">
+                            <!-- 01 Hero Background Image -->
+                            <div class="border border-gray-100 rounded-xl p-4 bg-gray-50/50 space-y-3">
+                                <label class="block text-sm font-bold text-brand-dark">01 第一屏 主視覺背景圖 URL (Hero Image)</label>
+                                <input type="url" id="input-hero-img" required class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:border-gold focus:outline-none bg-white">
+                                <p class="text-xs text-gray-400">建議解析度: 1920x1080 高清橫圖</p>
+                            </div>
+
+                            <!-- 04 Courses Image -->
+                            <div class="border border-gray-100 rounded-xl p-4 bg-gray-50/50 space-y-3">
+                                <label class="block text-sm font-bold text-brand-dark">04 專業課程 右側形象大圖 URL (Courses Image)</label>
+                                <input type="url" id="input-courses-img" required class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:border-gold focus:outline-none bg-white">
+                                <p class="text-xs text-gray-400">建議比例: 4:3 專業沙龍教學情境圖</p>
+                            </div>
+
+                            <!-- 05 CTA Banner Image -->
+                            <div class="border border-gray-100 rounded-xl p-4 bg-gray-50/50 space-y-3">
+                                <label class="block text-sm font-bold text-brand-dark">05 店家加盟合作 橫幅背景圖 URL (Partner CTA Image)</label>
+                                <input type="url" id="input-cta-img" required class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:border-gold focus:outline-none bg-white">
+                                <p class="text-xs text-gray-400">建議比例: 16:9 質感質理圖</p>
+                            </div>
+
+                            <div class="pt-2 flex justify-end">
+                                <button type="submit" class="bg-gold hover:bg-gold-dark text-white px-8 py-3 rounded-xl text-sm font-medium transition-colors shadow">
+                                    <i class="ph ph-floppy-disk mr-1"></i> 儲存全站圖片設定
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- TAB 1: 03 明星產品管理 -->
+                <div id="tab-content-products" class="space-y-6 hidden">
+                    <div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-gray-200 shadow-sm">
+                        <div>
+                            <h4 class="font-serif font-bold text-lg text-brand-dark">明星產品列表 (03 區塊)</h4>
+                            <p class="text-xs text-brand-gray">更新產品圖片、產品名稱、短評與詳細成份功效文案</p>
+                        </div>
+                        <button onclick="openProductFormModal()" class="bg-gold hover:bg-gold-dark text-white px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 transition-colors">
+                            <i class="ph ph-plus-circle text-lg"></i> 上架新產品
+                        </button>
+                    </div>
+
+                    <div id="admin-products-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+
+                <!-- TAB 2: 06 為什麼選擇我們 -->
+                <div id="tab-content-whyus" class="space-y-6 hidden">
+                    <div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-gray-200 shadow-sm">
+                        <div>
+                            <h4 class="font-serif font-bold text-lg text-brand-dark">優勢特點列表 (06 區塊)</h4>
+                            <p class="text-xs text-brand-gray">編輯或新增前台展示的特色亮點卡片</p>
+                        </div>
+                        <button onclick="openWhyUsFormModal()" class="bg-gold hover:bg-gold-dark text-white px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 transition-colors">
+                            <i class="ph ph-plus-circle text-lg"></i> 新增優勢卡片
+                        </button>
+                    </div>
+
+                    <div id="admin-whyus-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+
+                <!-- TAB 3: 07 美容經營知識文章 -->
+                <div id="tab-content-knowledge" class="space-y-6 hidden">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-4 rounded-2xl border border-gray-200 shadow-sm gap-4">
+                        <div>
+                            <h4 class="font-serif font-bold text-lg text-brand-dark">專欄文章列表 (07 區塊)</h4>
+                            <p class="text-xs text-brand-gray">持續發布文章可增加 SEO 流量，並幫美容師與店家進行知識賦能</p>
+                        </div>
+                        <button onclick="openArticleFormModal()" class="bg-gold hover:bg-gold-dark text-white px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 transition-colors self-start sm:self-auto">
+                            <i class="ph ph-plus-circle text-lg"></i> 發布新文章
+                        </button>
+                    </div>
+
+                    <div id="admin-knowledge-list" class="space-y-3">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+
+                <!-- TAB 4: 08 最新活動管理 -->
+                <div id="tab-content-events" class="space-y-6 hidden">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-4 rounded-2xl border border-gray-200 shadow-sm gap-4">
+                        <div>
+                            <h4 class="font-serif font-bold text-lg text-brand-dark">活動與論壇看板 (08 區塊)</h4>
+                            <p class="text-xs text-brand-gray">發布即將舉行的線下實戰論壇、技術研討會或線上說明會</p>
+                        </div>
+                        <button onclick="openEventFormModal()" class="bg-gold hover:bg-gold-dark text-white px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 transition-colors self-start sm:self-auto">
+                            <i class="ph ph-plus-circle text-lg"></i> 新增活動看板
+                        </button>
+                    </div>
+
+                    <div id="admin-events-list" class="space-y-4">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+
+                <!-- TAB 5: 系統與重置 -->
+                <div id="tab-content-settings" class="space-y-6 hidden">
+                    <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-4">
+                        <h4 class="font-serif font-bold text-lg text-brand-dark">資料備份與還原設定</h4>
+                        <p class="text-sm text-brand-gray leading-relaxed">
+                            本系統將所有後台更新資料儲存於瀏覽器本地空間 (localStorage)。若您需要恢復美芙瀧初始預設內容，請點擊下方按鈕。
+                        </p>
+                        <div class="pt-4 flex flex-wrap gap-4">
+                            <button onclick="resetDataToDefault()" class="bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 px-5 py-2.5 rounded-xl text-sm font-medium transition-colors flex items-center gap-2">
+                                <i class="ph ph-trash text-lg"></i> 重置所有內容為美芙瀧預設內容
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Admin Footer -->
+            <div class="bg-white border-t border-gray-200 p-4 text-xs text-brand-gray flex justify-between items-center">
+                <span>提示：在後台進行的儲存變更，會即時更新至前台官網。</span>
+                <button onclick="closeAdminModal()" class="bg-brand-dark text-white px-5 py-2 rounded-xl hover:bg-gold transition-colors">
+                    關閉後台並預覽網站
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- FORM MODAL: Product Edit/Add               -->
+    <!-- ========================================== -->
+    <div id="product-form-modal" class="fixed inset-0 z-[60] hidden modal-backdrop flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 id="product-form-title" class="font-serif font-bold text-lg">編輯產品項目</h3>
+                <button onclick="closeProductFormModal()" class="text-gray-400 hover:text-gray-700 text-xl"><i class="ph ph-x"></i></button>
+            </div>
+            <form id="product-form" onsubmit="handleProductSave(event)" class="space-y-4">
+                <input type="hidden" id="product-id">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-brand-dark mb-1">產品名稱</label>
+                        <input type="text" id="product-title" required class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:border-gold focus:outline-none" placeholder="極致賦活精華液">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-brand-dark mb-1">產品標籤 (如: 明星熱銷、新品上市、課程專用)</label>
+                        <input type="text" id="product-badge" required class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:border-gold focus:outline-none" placeholder="明星熱銷">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-brand-dark mb-1">容量/規格標記 (如: 50ml / Salon專用)</label>
+                        <input type="text" id="product-price" required class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:border-gold focus:outline-none" placeholder="50ml / 店家指定">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-brand-dark mb-1">產品圖片網址 (URL)</label>
+                        <input type="url" id="product-img" required class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:border-gold focus:outline-none" placeholder="https://images.unsplash.com/...">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-brand-dark mb-1">卡片副標題 / 一句話簡介</label>
+                    <input type="text" id="product-subtitle" required class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:border-gold focus:outline-none" placeholder="店家指定抗老首選，深層修復基底。">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-brand-dark mb-1">產品詳細文案與成分介紹 (點開彈窗觀看)</label>
+                    <textarea id="product-desc" rows="5" required class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:border-gold focus:outline-none" placeholder="輸入詳細功效、成分與使用說明..."></textarea>
+                </div>
+                <div class="flex justify-end gap-3 pt-2">
+                    <button type="button" onclick="closeProductFormModal()" class="px-4 py-2 border rounded-xl text-sm">取消</button>
+                    <button type="submit" class="px-5 py-2 bg-gold hover:bg-gold-dark text-white rounded-xl text-sm font-medium">儲存產品資訊</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Form Modal: WhyUs Edit/Add -->
+    <div id="whyus-form-modal" class="fixed inset-0 z-[60] hidden modal-backdrop flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 id="whyus-form-title" class="font-serif font-bold text-lg">編輯優勢項目</h3>
+                <button onclick="closeWhyUsFormModal()" class="text-gray-400 hover:text-gray-700 text-xl"><i class="ph ph-x"></i></button>
+            </div>
+            <form id="whyus-form" onsubmit="handleWhyUsSave(event)" class="space-y-4">
+                <input type="hidden" id="whyus-id">
+                <div>
+                    <label class="block text-xs font-medium text-brand-dark mb-1">Phosphor Icon 名稱 (例: ph-medal, ph-graduation-cap, ph-shield-check)</label>
+                    <input type="text" id="whyus-icon" required class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:border-gold focus:outline-none" placeholder="ph-medal">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-brand-dark mb-1">優勢標題</label>
+                    <input type="text" id="whyus-title" required class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:border-gold focus:outline-none" placeholder="專業經驗">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-brand-dark mb-1">簡介說明</label>
+                    <textarea id="whyus-desc" rows="3" required class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:border-gold focus:outline-none" placeholder="輸入優勢特色說明..."></textarea>
+                </div>
+                <div class="flex justify-end gap-3 pt-2">
+                    <button type="button" onclick="closeWhyUsFormModal()" class="px-4 py-2 border rounded-xl text-sm">取消</button>
+                    <button type="submit" class="px-5 py-2 bg-gold hover:bg-gold-dark text-white rounded-xl text-sm font-medium">儲存更新</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Form Modal: Article Edit/Add -->
+    <div id="article-form-modal" class="fixed inset-0 z-[60] hidden modal-backdrop flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 id="article-form-title" class="font-serif font-bold text-lg">發布/編輯文章</h3>
+                <button onclick="closeArticleFormModal()" class="text-gray-400 hover:text-gray-700 text-xl"><i class="ph ph-x"></i></button>
+            </div>
+            <form id="article-form" onsubmit="handleArticleSave(event)" class="space-y-4">
+                <input type="hidden" id="article-id">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-brand-dark mb-1">文章標題</label>
+                        <input type="text" id="article-title" required class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:border-gold focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-brand-dark mb-1">文章分類</label>
+                        <select id="article-category" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:border-gold focus:outline-none">
+                            <option value="經營管理">經營管理</option>
+                            <option value="產業法規">產業法規</option>
+                            <option value="人才培育">人才培育</option>
+                            <option value="行銷策略">行銷策略</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-brand-dark mb-1">發布日期</label>
+                        <input type="date" id="article-date" required class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:border-gold focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-brand-dark mb-1">封面圖片網址 (Unsplash URL)</label>
+                        <input type="url" id="article-img" required class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:border-gold focus:outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-brand-dark mb-1">卡片摘要（簡短 2-3 句）</label>
+                    <textarea id="article-summary" rows="2" required class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:border-gold focus:outline-none"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-brand-dark mb-1">文章完整內容 (支援多段落文字與 HTML 標籤)</label>
+                    <textarea id="article-content" rows="6" required class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:border-gold focus:outline-none" placeholder="輸入詳細專欄文章內容..."></textarea>
+                </div>
+                <div class="flex justify-end gap-3 pt-2">
+                    <button type="button" onclick="closeArticleFormModal()" class="px-4 py-2 border rounded-xl text-sm">取消</button>
+                    <button type="submit" class="px-5 py-2 bg-gold hover:bg-gold-dark text-white rounded-xl text-sm font-medium">發布文章</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Form Modal: Event Edit/Add -->
+    <div id="event-form-modal" class="fixed inset-0 z-[60] hidden modal-backdrop flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 id="event-form-title" class="font-serif font-bold text-lg">編輯活動與研討會</h3>
+                <button onclick="closeEventFormModal()" class="text-gray-400 hover:text-gray-700 text-xl"><i class="ph ph-x"></i></button>
+            </div>
+            <form id="event-form" onsubmit="handleEventSave(event)" class="space-y-4">
+                <input type="hidden" id="event-id">
+                <div>
+                    <label class="block text-xs font-medium text-brand-dark mb-1">活動主題名稱</label>
+                    <input type="text" id="event-title" required class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:border-gold focus:outline-none">
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-brand-dark mb-1">時間與地點標記</label>
+                        <input type="text" id="event-dateloc" placeholder="例: 2026.09.15 | 台北文創" required class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:border-gold focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-brand-dark mb-1">活動狀態</label>
+                        <select id="event-status" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:border-gold focus:outline-none">
+                            <option value="即將舉行">即將舉行</option>
+                            <option value="熱烈報名中">熱烈報名中</option>
+                            <option value="即將額滿">即將額滿</option>
+                            <option value="已結束">已結束</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-brand-dark mb-1">活動封面圖網址 (URL)</label>
+                    <input type="url" id="event-img" required class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:border-gold focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-brand-dark mb-1">活動亮點與詳細說明</label>
+                    <textarea id="event-desc" rows="4" required class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:border-gold focus:outline-none"></textarea>
+                </div>
+                <div class="flex justify-end gap-3 pt-2">
+                    <button type="button" onclick="closeEventFormModal()" class="px-4 py-2 border rounded-xl text-sm">取消</button>
+                    <button type="submit" class="px-5 py-2 bg-gold hover:bg-gold-dark text-white rounded-xl text-sm font-medium">儲存活動</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- JAVASCRIPT LOGIC & CMS MANAGEMENT ENGINE   -->
+    <!-- ========================================== -->
+    <script>
+        // Default Site Images
+        const defaultSiteImages = {
+            hero_img: "https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80",
+            courses_img: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+            cta_img: "https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
+        };
+
+        // Default Products Data
+        const defaultProducts = [
+            {
+                id: "p1",
+                title: "極致賦活精華液",
+                subtitle: "店家指定抗老首選，深層修復基底。",
+                badge: "明星熱銷",
+                price: "50ml / Salon專用",
+                img: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                desc: "蘊含高濃度胜肽精華與多重玻尿酸成分，專為緊緻肌膚與撫平細紋研發。透亮修復質地好吸收不黏膩，能顯著提升肌膚屏障防護力，是沙龍高階抗老課程的頂級核心配方。"
+            },
+            {
+                id: "p2",
+                title: "水光煥白安瓶組",
+                subtitle: "課程專用高濃度導入，打造水光肌。",
+                badge: "高階導入",
+                price: "10ml x 5入",
+                img: "https://images.unsplash.com/photo-1608248597260-50949d6a7142?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                desc: "採用封存無菌安瓶包裝，濃縮傳明酸與植物萃取煥白因子。無瑕淨白防護，搭配微針或無針超音波導入儀，能發揮顯著亮白補水效果，迅速還原透亮光澤。"
+            },
+            {
+                id: "p3",
+                title: "術後修護冰凝霜",
+                subtitle: "醫美級鎮定修護，專為脆弱肌膚設計。",
+                badge: "修護推薦",
+                price: "100g / 院線裝",
+                img: "https://images.unsplash.com/photo-1556228720-195a672e8a03?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                desc: "富含積雪草（CICA）與維生素 B5，專門為光電微整術後或敏感泛紅肌膚調配。清涼舒緩不含酒精與人工香精，迅速安撫熱刺激，長效維持肌膚高含水量。"
+            }
+        ];
+
+        // Default Why Us Sample Data
+        const defaultWhyUs = [
+            {
+                id: "w1",
+                icon: "ph-medal",
+                title: "專業經驗",
+                desc: "深耕美業多年，輔導超過百間沙龍店家成功獲利，深知市場痛點與趨勢。"
+            },
+            {
+                id: "w2",
+                icon: "ph-graduation-cap",
+                title: "教育系統",
+                desc: "獨創的標準化教育體系，讓美容技術不再難以複製，大幅降低人員流動成本。"
+            },
+            {
+                id: "w3",
+                icon: "ph-shield-check",
+                title: "PIF建置",
+                desc: "符合衛福部最新法規，完整化妝品產品資訊檔案(PIF)建置，讓店家安心使用無後顧之憂。"
+            },
+            {
+                id: "w4",
+                icon: "ph-map-pin-line",
+                title: "全省服務",
+                desc: "北中南皆有駐點督導與講師，提供即時的線下支援與到店輔導服務。"
+            }
+        ];
+
+        // Default Knowledge Sample Data
+        const defaultKnowledge = [
+            {
+                id: "k1",
+                category: "經營管理",
+                date: "2026-03-12",
+                title: "如何提高單客價？3個美容室不推銷也能成交的隱藏話術",
+                summary: "許多美容師害怕推銷，導致客單價遲遲無法提升。其實，真正的成交來自於「顧問式諮詢」。本文分享高轉換溝通技巧...",
+                img: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                content: `<p class="font-bold text-lg text-gold">1. 從「推銷產品」轉變為「診斷問題」</p>
+                          <p>顧客來到美容室不是為了買保養品，而是為了撫平皺紋、解決痘痘或改善乾燥。美容師應充當皮膚顧問，透過專業肌膚檢測儀器，點出問題成因。</p>
+                          <p class="font-bold text-lg text-gold mt-4">2. 運用「視覺化比對」建立信任感</p>
+                          <p>每次課程前後留存高清肌膚比對圖，讓顧客親眼見證改變。當成果顯而易見時，介紹後續居家保養產品將變得水到渠成。</p>
+                          <p class="font-bold text-lg text-gold mt-4">3. 設計「客製化階段療程包」</p>
+                          <p>避免單次單項收費，而是替顧客規劃 3 個月的肌膚重建計畫，包含店內療程與居家保養組合，有效大幅提高客單價並提升留客率。</p>`
+            },
+            {
+                id: "k2",
+                category: "產業法規",
+                date: "2026-02-28",
+                title: "化妝品PIF新制全面落實！美容店家該如何挑選合法保養品？",
+                summary: "衛生福利部全面實施化妝品產品資訊檔案(PIF)制度。若不了解法規可能面臨高額罰款，美芙瀧為您整理挑選重點...",
+                img: "https://images.unsplash.com/photo-1629904853716-f0bc54eea481?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                content: `<p>隨著衛福部對化妝品與沙龍保養品安全監管提升，產品資訊檔案（PIF, Product Information File）已成為合法合規經營的必備指標。</p>
+                          <p class="my-3 font-semibold">作為美容沙龍創業者，挑選合作品牌的 3 大原則：</p>
+                          <ul class="list-disc pl-5 space-y-2">
+                            <li>確認品牌是否有提供完整的 SGS 或第三方公正單位檢驗報告。</li>
+                            <li>確認保養品是否建置完整 PIF 檔案並通過安全評估簽署。</li>
+                            <li>標示成分是否符合國際 INCI 規範，避免使用違禁成分。</li>
+                          </ul>
+                          <p class="mt-4">美芙瀧全系列保養品皆合法完成 PIF 建置，讓加盟店家無後顧之憂。</p>`
+            },
+            {
+                id: "k3",
+                category: "人才培育",
+                date: "2026-02-15",
+                title: "總是留不住美容師？建立完善的教育培訓與階梯獎金制度",
+                summary: "「辛苦培養的美容師，學會了就跑？」透過建立階梯式的技術考核與分潤制度，不只能留住人才，還能讓員工自動創造高業績...",
+                img: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                content: `<p>許多美容沙龍老闆面臨最大的痛點不是找不到客人，而是「美容師培育好就跳槽離職」。</p>
+                          <p class="mt-2 font-semibold">解決團隊流失的雙核心架構：</p>
+                          <p><strong>一、明晰的技術階梯認證：</strong> 將美容師分為初級、中級、高階技士與店長。每通過一階段考核即可享受底薪與獎金提成上揚，讓員工看得到未來發展。</p>
+                          <p class="mt-2"><strong>二、顧問式業績分潤：</strong> 除了技術工本費，加入銷售提成與客戶滿意度獎金，提升團隊主動服務意願。</p>`
+            }
+        ];
+
+        // Default Events Sample Data
+        const defaultEvents = [
+            {
+                id: "e1",
+                title: "2026 下半年美業趨勢與百萬業績實戰論壇",
+                dateLoc: "2026.09.20 | 台北文創大樓",
+                status: "熱烈報名中",
+                img: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                desc: "美芙瀧年度盛典！邀請業界頂尖導師，為您解析最新美容消費趨勢。現場將發表全新抗衰老儀器搭配手法，並分享如何在淡季突破業績瓶頸的實戰行銷策略。"
+            }
+        ];
+
+        // App States
+        let siteImages = {};
+        let productsData = [];
+        let whyUsData = [];
+        let knowledgeData = [];
+        let eventsData = [];
+
+        // Load or initialize Data
+        function initData() {
+            const storedSiteImages = localStorage.getItem('mefullon_site_images');
+            const storedProducts = localStorage.getItem('mefullon_products');
+            const storedWhyUs = localStorage.getItem('mefullon_whyus');
+            const storedKnowledge = localStorage.getItem('mefullon_knowledge');
+            const storedEvents = localStorage.getItem('mefullon_events');
+
+            siteImages = storedSiteImages ? JSON.parse(storedSiteImages) : defaultSiteImages;
+            productsData = storedProducts ? JSON.parse(storedProducts) : defaultProducts;
+            whyUsData = storedWhyUs ? JSON.parse(storedWhyUs) : defaultWhyUs;
+            knowledgeData = storedKnowledge ? JSON.parse(storedKnowledge) : defaultKnowledge;
+            eventsData = storedEvents ? JSON.parse(storedEvents) : defaultEvents;
+
+            renderFrontend();
+        }
+
+        // Save State
+        function saveData() {
+            localStorage.setItem('mefullon_site_images', JSON.stringify(siteImages));
+            localStorage.setItem('mefullon_products', JSON.stringify(productsData));
+            localStorage.setItem('mefullon_whyus', JSON.stringify(whyUsData));
+            localStorage.setItem('mefullon_knowledge', JSON.stringify(knowledgeData));
+            localStorage.setItem('mefullon_events', JSON.stringify(eventsData));
+            renderFrontend();
+            renderAdminLists();
+        }
+
+        // Toast Helper
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `px-5 py-3 rounded-2xl shadow-xl text-sm font-medium flex items-center gap-2 text-white transition-all transform duration-300 translate-y-[-10px] ${
+                type === 'success' ? 'bg-emerald-600' : 'bg-gold-dark'
+            }`;
+            toast.innerHTML = `<i class="ph ${type === 'success' ? 'ph-check-circle' : 'ph-info'} text-lg"></i> ${message}`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-[-20px]');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // ==========================================
+        // FRONTEND RENDERERS
+        // ==========================================
+        function renderFrontend() {
+            // Render 01, 04, 05 Site Dynamic Images
+            const heroImg = document.getElementById('hero-bg-img');
+            if (heroImg) heroImg.src = siteImages.hero_img || defaultSiteImages.hero_img;
+
+            const coursesImg = document.getElementById('courses-bg-img');
+            if (coursesImg) coursesImg.src = siteImages.courses_img || defaultSiteImages.courses_img;
+
+            const ctaImg = document.getElementById('cta-bg-img');
+            if (ctaImg) ctaImg.src = siteImages.cta_img || defaultSiteImages.cta_img;
+
+            // Render 03 Star Products
+            const productsContainer = document.getElementById('products-grid');
+            if (productsContainer) {
+                if (productsData.length === 0) {
+                    productsContainer.innerHTML = `<div class="col-span-full text-center text-brand-gray py-8">目前暫無產品，請至後台新增。</div>`;
+                } else {
+                    productsContainer.innerHTML = productsData.map((item, index) => `
+                        <div class="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between fade-up cursor-pointer" onclick="openProductModal('${item.id}')" style="transition-delay: ${index * 100}ms;">
+                            <div>
+                                <div class="relative overflow-hidden aspect-[4/5] bg-brand-light flex items-center justify-center border-b border-gray-100">
+                                    <img src="${escapeHtml(item.img)}" alt="${escapeHtml(item.title)}" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700">
+                                    <span class="absolute top-3 left-3 bg-brand-dark/80 backdrop-blur-md text-gold-light text-xs px-3 py-1 rounded-full font-medium tracking-wide">${escapeHtml(item.badge)}</span>
+                                    <span class="absolute bottom-3 right-3 bg-white/90 backdrop-blur-md text-brand-dark text-xs px-2.5 py-1 rounded-md font-mono">${escapeHtml(item.price)}</span>
+                                </div>
+                                <div class="p-6 text-center">
+                                    <h3 class="text-xl font-serif tracking-wide mb-2 text-brand-dark font-semibold group-hover:text-gold transition-colors">${escapeHtml(item.title)}</h3>
+                                    <p class="text-brand-gray text-sm mb-4 line-clamp-2 leading-relaxed">${escapeHtml(item.subtitle)}</p>
+                                </div>
+                            </div>
+                            <div class="pb-6 text-center">
+                                <span class="text-gold text-sm tracking-widest border-b border-gold pb-1 font-medium group-hover:text-gold-dark">詳細成份與文案 <i class="ph ph-arrow-right text-xs"></i></span>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            // Render 06 Why Us
+            const whyUsContainer = document.getElementById('whyus-grid');
+            if (whyUsContainer) {
+                whyUsContainer.innerHTML = whyUsData.map((item, index) => `
+                    <div class="text-center fade-up p-6 border border-gray-100 rounded-2xl hover:border-gold/40 hover:shadow-lg transition-all bg-white" style="transition-delay: ${index * 100}ms;">
+                        <i class="ph ${item.icon} text-5xl text-gold mb-4 mx-auto inline-block"></i>
+                        <h3 class="text-lg font-serif mb-2 tracking-wide text-brand-dark font-semibold">${escapeHtml(item.title)}</h3>
+                        <p class="text-brand-gray text-sm leading-relaxed">${escapeHtml(item.desc)}</p>
+                    </div>
+                `).join('');
+            }
+
+            // Render 07 Knowledge Base
+            const knowledgeContainer = document.getElementById('knowledge-grid');
+            if (knowledgeContainer) {
+                knowledgeContainer.innerHTML = knowledgeData.map((item, index) => `
+                    <article class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col fade-up" style="transition-delay: ${index * 100}ms;">
+                        <div class="aspect-[16/9] overflow-hidden bg-gray-100 relative cursor-pointer" onclick="openArticleModal('${item.id}')">
+                            <img src="${escapeHtml(item.img)}" alt="${escapeHtml(item.title)}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                            <span class="absolute top-3 left-3 bg-brand-dark/80 backdrop-blur-md text-white text-xs px-2.5 py-1 rounded-md font-medium">${escapeHtml(item.category)}</span>
+                        </div>
+                        <div class="p-6 flex-1 flex flex-col justify-between">
+                            <div>
+                                <div class="text-xs text-brand-gray mb-2">${escapeHtml(item.date)}</div>
+                                <h3 class="text-lg font-serif font-semibold mb-3 hover:text-gold transition-colors line-clamp-2">
+                                    <a href="javascript:void(0)" onclick="openArticleModal('${item.id}')">${escapeHtml(item.title)}</a>
+                                </h3>
+                                <p class="text-brand-gray text-sm line-clamp-3 mb-4 leading-relaxed">
+                                    ${escapeHtml(item.summary)}
+                                </p>
+                            </div>
+                            <button onclick="openArticleModal('${item.id}')" class="text-gold text-sm font-medium hover:underline inline-flex items-center gap-1 self-start">
+                                繼續閱讀 <i class="ph ph-arrow-right"></i>
+                            </button>
+                        </div>
+                    </article>
+                `).join('');
+            }
+
+            // Render 08 Events
+            const eventsContainer = document.getElementById('events-container');
+            if (eventsContainer) {
+                if (eventsData.length === 0) {
+                    eventsContainer.innerHTML = `<div class="text-center text-brand-gray py-8">目前暫無活動，請由後台新增。</div>`;
+                } else {
+                    eventsContainer.innerHTML = eventsData.map((item) => `
+                        <div class="bg-brand-light rounded-3xl p-6 md:p-10 flex flex-col md:flex-row gap-8 items-center border border-gray-200/60 shadow-sm fade-up">
+                            <div class="w-full md:w-2/5 aspect-[4/3] rounded-2xl overflow-hidden relative group bg-gray-200">
+                                <img src="${escapeHtml(item.img)}" alt="${escapeHtml(item.title)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                                <div class="absolute top-4 left-4 bg-brand-dark text-gold-light text-xs px-3 py-1 rounded-full tracking-wider font-medium">${escapeHtml(item.status)}</div>
+                            </div>
+                            <div class="w-full md:w-3/5">
+                                <div class="text-gold font-medium tracking-wider mb-2 text-sm flex items-center gap-1">
+                                    <i class="ph ph-calendar"></i> ${escapeHtml(item.dateLoc)}
+                                </div>
+                                <h3 class="text-2xl md:text-3xl font-serif mb-4 text-brand-dark font-medium">${escapeHtml(item.title)}</h3>
+                                <p class="text-brand-gray mb-6 leading-relaxed text-sm md:text-base">
+                                    ${escapeHtml(item.desc)}
+                                </p>
+                                <div class="flex flex-wrap gap-4">
+                                    <a href="#contact" class="bg-brand-dark text-white px-8 py-3 rounded-full text-sm tracking-widest hover:bg-gold transition-colors shadow-md">
+                                        立即線上諮詢與報名
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            observeAnimations();
+        }
+
+        // Product Modal Read Window
+        function openProductModal(id) {
+            const product = productsData.find(p => p.id === id);
+            if (!product) return;
+
+            document.getElementById('modal-product-badge').innerText = product.badge;
+            document.getElementById('modal-product-price').innerText = product.price;
+            document.getElementById('modal-product-title').innerText = product.title;
+            document.getElementById('modal-product-subtitle').innerText = product.subtitle;
+            document.getElementById('modal-product-img').src = product.img;
+            
+            // Format line breaks or html
+            const descFormatted = product.desc.replace(/\n/g, '<br>');
+            document.getElementById('modal-product-desc').innerHTML = descFormatted;
+
+            document.getElementById('product-read-modal').classList.remove('hidden');
+        }
+
+        function closeProductModal() {
+            document.getElementById('product-read-modal').classList.add('hidden');
+        }
+
+        // Article Read Modal
+        function openArticleModal(id) {
+            const article = knowledgeData.find(a => a.id === id);
+            if (!article) return;
+
+            document.getElementById('modal-article-category').innerText = article.category;
+            document.getElementById('modal-article-date').innerText = article.date;
+            document.getElementById('modal-article-title').innerText = article.title;
+            document.getElementById('modal-article-img').src = article.img;
+            document.getElementById('modal-article-body').innerHTML = article.content || article.summary;
+
+            document.getElementById('article-read-modal').classList.remove('hidden');
+        }
+
+        function closeArticleModal() {
+            document.getElementById('article-read-modal').classList.add('hidden');
+        }
+
+
+        // ==========================================
+        // BACKEND CMS ADMIN DASHBOARD LOGIC
+        // ==========================================
+        function openAdminModal(defaultTab = 'site-images') {
+            document.getElementById('admin-modal').classList.remove('hidden');
+            switchAdminTab(defaultTab);
+            renderAdminLists();
+        }
+
+        function closeAdminModal() {
+            document.getElementById('admin-modal').classList.add('hidden');
+        }
+
+        function switchAdminTab(tabName) {
+            const tabs = ['site-images', 'products', 'whyus', 'knowledge', 'events', 'settings'];
+            tabs.forEach(t => {
+                const btn = document.getElementById(`tab-btn-${t}`);
+                const content = document.getElementById(`tab-content-${t}`);
+                if (t === tabName) {
+                    btn.classList.add('border-gold', 'text-gold', 'font-semibold');
+                    btn.classList.remove('border-transparent', 'text-brand-gray');
+                    content.classList.remove('hidden');
+                } else {
+                    btn.classList.remove('border-gold', 'text-gold', 'font-semibold');
+                    btn.classList.add('border-transparent', 'text-brand-gray');
+                    content.classList.add('hidden');
+                }
+            });
+        }
+
+        function renderAdminLists() {
+            // Fill Site Images Inputs
+            document.getElementById('input-hero-img').value = siteImages.hero_img || '';
+            document.getElementById('input-courses-img').value = siteImages.courses_img || '';
+            document.getElementById('input-cta-img').value = siteImages.cta_img || '';
+
+            // 03 Admin Product List
+            const productsList = document.getElementById('admin-products-list');
+            productsList.innerHTML = productsData.map(item => `
+                <div class="bg-white p-4 rounded-xl border border-gray-200 flex justify-between items-start gap-3">
+                    <div class="flex gap-3">
+                        <img src="${escapeHtml(item.img)}" class="w-16 h-16 rounded-lg object-cover bg-gray-100 flex-shrink-0">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-[10px] bg-gold/20 text-gold-dark px-2 py-0.5 rounded font-medium">${escapeHtml(item.badge)}</span>
+                                <span class="text-xs text-gray-400 font-mono">${escapeHtml(item.price)}</span>
+                            </div>
+                            <h5 class="font-bold text-sm text-brand-dark mt-1">${escapeHtml(item.title)}</h5>
+                            <p class="text-xs text-brand-gray mt-0.5 line-clamp-1">${escapeHtml(item.subtitle)}</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-1 flex-shrink-0">
+                        <button onclick="editProduct('${item.id}')" class="p-1.5 text-gray-500 hover:text-gold rounded-lg hover:bg-gray-100" title="編輯">
+                            <i class="ph ph-pencil-simple text-lg"></i>
+                        </button>
+                        <button onclick="deleteProduct('${item.id}')" class="p-1.5 text-gray-500 hover:text-red-500 rounded-lg hover:bg-gray-100" title="刪除">
+                            <i class="ph ph-trash text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            // 06 Admin List
+            const whyUsList = document.getElementById('admin-whyus-list');
+            whyUsList.innerHTML = whyUsData.map(item => `
+                <div class="bg-white p-4 rounded-xl border border-gray-200 flex justify-between items-start gap-3">
+                    <div class="flex gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-gold/10 text-gold flex items-center justify-center text-xl flex-shrink-0">
+                            <i class="ph ${item.icon}"></i>
+                        </div>
+                        <div>
+                            <h5 class="font-bold text-sm text-brand-dark">${escapeHtml(item.title)}</h5>
+                            <p class="text-xs text-brand-gray mt-1">${escapeHtml(item.desc)}</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-1 flex-shrink-0">
+                        <button onclick="editWhyUs('${item.id}')" class="p-1.5 text-gray-500 hover:text-gold rounded-lg hover:bg-gray-100" title="編輯">
+                            <i class="ph ph-pencil-simple text-lg"></i>
+                        </button>
+                        <button onclick="deleteWhyUs('${item.id}')" class="p-1.5 text-gray-500 hover:text-red-500 rounded-lg hover:bg-gray-100" title="刪除">
+                            <i class="ph ph-trash text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            // 07 Admin Article List
+            const knowledgeList = document.getElementById('admin-knowledge-list');
+            knowledgeList.innerHTML = knowledgeData.map(item => `
+                <div class="bg-white p-4 rounded-xl border border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div class="flex items-center gap-3">
+                        <img src="${escapeHtml(item.img)}" class="w-14 h-14 rounded-lg object-cover bg-gray-100 flex-shrink-0">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-[10px] bg-brand-rose text-brand-dark px-2 py-0.5 rounded font-medium">${escapeHtml(item.category)}</span>
+                                <span class="text-xs text-gray-400">${item.date}</span>
+                            </div>
+                            <h5 class="font-bold text-sm text-brand-dark mt-1">${escapeHtml(item.title)}</h5>
+                        </div>
+                    </div>
+                    <div class="flex gap-2 self-end sm:self-auto">
+                        <button onclick="editArticle('${item.id}')" class="px-3 py-1.5 bg-gray-100 text-brand-dark hover:bg-gold hover:text-white rounded-lg text-xs font-medium flex items-center gap-1 transition-colors">
+                            <i class="ph ph-pencil-simple"></i> 編輯
+                        </button>
+                        <button onclick="deleteArticle('${item.id}')" class="px-3 py-1.5 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white rounded-lg text-xs font-medium flex items-center gap-1 transition-colors">
+                            <i class="ph ph-trash"></i> 刪除
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            // 08 Admin Events List
+            const eventsList = document.getElementById('admin-events-list');
+            eventsList.innerHTML = eventsData.map(item => `
+                <div class="bg-white p-4 rounded-xl border border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div class="flex items-center gap-4">
+                        <img src="${escapeHtml(item.img)}" class="w-20 h-14 rounded-lg object-cover bg-gray-100 flex-shrink-0">
+                        <div>
+                            <span class="text-[10px] bg-gold/20 text-gold-dark px-2 py-0.5 rounded font-medium">${escapeHtml(item.status)}</span>
+                            <h5 class="font-bold text-sm text-brand-dark mt-1">${escapeHtml(item.title)}</h5>
+                            <p class="text-xs text-gray-400">${escapeHtml(item.dateLoc)}</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-2 self-end sm:self-auto">
+                        <button onclick="editEvent('${item.id}')" class="px-3 py-1.5 bg-gray-100 text-brand-dark hover:bg-gold hover:text-white rounded-lg text-xs font-medium flex items-center gap-1 transition-colors">
+                            <i class="ph ph-pencil-simple"></i> 編輯
+                        </button>
+                        <button onclick="deleteEvent('${item.id}')" class="px-3 py-1.5 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white rounded-lg text-xs font-medium flex items-center gap-1 transition-colors">
+                            <i class="ph ph-trash"></i> 刪除
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Save Site Images Handler
+        function handleSiteImagesSave(e) {
+            e.preventDefault();
+            siteImages = {
+                hero_img: document.getElementById('input-hero-img').value.trim(),
+                courses_img: document.getElementById('input-courses-img').value.trim(),
+                cta_img: document.getElementById('input-cta-img').value.trim()
+            };
+            saveData();
+            showToast("全站圖片已成功更新與儲存！");
+        }
+
+        // ==========================================
+        // CRUD ACTIONS: 03 PRODUCTS
+        // ==========================================
+        function openProductFormModal(item = null) {
+            document.getElementById('product-form-modal').classList.remove('hidden');
+            if (item) {
+                document.getElementById('product-form-title').innerText = "編輯明星產品";
+                document.getElementById('product-id').value = item.id;
+                document.getElementById('product-title').value = item.title;
+                document.getElementById('product-badge').value = item.badge;
+                document.getElementById('product-price').value = item.price;
+                document.getElementById('product-img').value = item.img;
+                document.getElementById('product-subtitle').value = item.subtitle;
+                document.getElementById('product-desc').value = item.desc;
+            } else {
+                document.getElementById('product-form-title').innerText = "上架新明星產品";
+                document.getElementById('product-form').reset();
+                document.getElementById('product-id').value = '';
+            }
+        }
+        function closeProductFormModal() {
+            document.getElementById('product-form-modal').classList.add('hidden');
+        }
+        function editProduct(id) {
+            const item = productsData.find(p => p.id === id);
+            if (item) openProductFormModal(item);
+        }
+        function deleteProduct(id) {
+            productsData = productsData.filter(p => p.id !== id);
+            saveData();
+            showToast("已下架刪除該產品");
+        }
+        function handleProductSave(e) {
+            e.preventDefault();
+            const id = document.getElementById('product-id').value;
+            const newItem = {
+                id: id || 'p_' + Date.now(),
+                title: document.getElementById('product-title').value.trim(),
+                badge: document.getElementById('product-badge').value.trim(),
+                price: document.getElementById('product-price').value.trim(),
+                img: document.getElementById('product-img').value.trim(),
+                subtitle: document.getElementById('product-subtitle').value.trim(),
+                desc: document.getElementById('product-desc').value.trim()
+            };
+            if (id) {
+                const idx = productsData.findIndex(p => p.id === id);
+                if (idx !== -1) productsData[idx] = newItem;
+            } else {
+                productsData.push(newItem);
+            }
+            saveData();
+            closeProductFormModal();
+            showToast("03 明星產品資訊與文案已儲存！");
+        }
+
+        // ==========================================
+        // CRUD ACTIONS: 06 WHY US
+        // ==========================================
+        function openWhyUsFormModal(item = null) {
+            document.getElementById('whyus-form-modal').classList.remove('hidden');
+            if (item) {
+                document.getElementById('whyus-form-title').innerText = "編輯優勢項目";
+                document.getElementById('whyus-id').value = item.id;
+                document.getElementById('whyus-icon').value = item.icon;
+                document.getElementById('whyus-title').value = item.title;
+                document.getElementById('whyus-desc').value = item.desc;
+            } else {
+                document.getElementById('whyus-form-title').innerText = "新增優勢項目";
+                document.getElementById('whyus-form').reset();
+                document.getElementById('whyus-id').value = '';
+            }
+        }
+        function closeWhyUsFormModal() {
+            document.getElementById('whyus-form-modal').classList.add('hidden');
+        }
+        function editWhyUs(id) {
+            const item = whyUsData.find(w => w.id === id);
+            if (item) openWhyUsFormModal(item);
+        }
+        function deleteWhyUs(id) {
+            whyUsData = whyUsData.filter(w => w.id !== id);
+            saveData();
+            showToast("已成功刪除該優勢特點");
+        }
+        function handleWhyUsSave(e) {
+            e.preventDefault();
+            const id = document.getElementById('whyus-id').value;
+            const newItem = {
+                id: id || 'w_' + Date.now(),
+                icon: document.getElementById('whyus-icon').value.trim(),
+                title: document.getElementById('whyus-title').value.trim(),
+                desc: document.getElementById('whyus-desc').value.trim()
+            };
+            if (id) {
+                const idx = whyUsData.findIndex(w => w.id === id);
+                if (idx !== -1) whyUsData[idx] = newItem;
+            } else {
+                whyUsData.push(newItem);
+            }
+            saveData();
+            closeWhyUsFormModal();
+            showToast("06 優勢特點已儲存更新！");
+        }
+
+        // ==========================================
+        // CRUD ACTIONS: 07 KNOWLEDGE ARTICLES
+        // ==========================================
+        function openArticleFormModal(item = null) {
+            document.getElementById('article-form-modal').classList.remove('hidden');
+            if (item) {
+                document.getElementById('article-form-title').innerText = "編輯經營文章";
+                document.getElementById('article-id').value = item.id;
+                document.getElementById('article-title').value = item.title;
+                document.getElementById('article-category').value = item.category;
+                document.getElementById('article-date').value = item.date;
+                document.getElementById('article-img').value = item.img;
+                document.getElementById('article-summary').value = item.summary;
+                document.getElementById('article-content').value = item.content || item.summary;
+            } else {
+                document.getElementById('article-form-title').innerText = "發布新文章";
+                document.getElementById('article-form').reset();
+                document.getElementById('article-id').value = '';
+                document.getElementById('article-date').value = new Date().toISOString().split('T')[0];
+            }
+        }
+        function closeArticleFormModal() {
+            document.getElementById('article-form-modal').classList.add('hidden');
+        }
+        function editArticle(id) {
+            const item = knowledgeData.find(k => k.id === id);
+            if (item) openArticleFormModal(item);
+        }
+        function deleteArticle(id) {
+            knowledgeData = knowledgeData.filter(k => k.id !== id);
+            saveData();
+            showToast("文章已刪除");
+        }
+        function handleArticleSave(e) {
+            e.preventDefault();
+            const id = document.getElementById('article-id').value;
+            const newItem = {
+                id: id || 'k_' + Date.now(),
+                title: document.getElementById('article-title').value.trim(),
+                category: document.getElementById('article-category').value,
+                date: document.getElementById('article-date').value,
+                img: document.getElementById('article-img').value.trim(),
+                summary: document.getElementById('article-summary').value.trim(),
+                content: document.getElementById('article-content').value.trim()
+            };
+            if (id) {
+                const idx = knowledgeData.findIndex(k => k.id === id);
+                if (idx !== -1) knowledgeData[idx] = newItem;
+            } else {
+                knowledgeData.unshift(newItem);
+            }
+            saveData();
+            closeArticleFormModal();
+            showToast("07 經營文章已成功發布！");
+        }
+
+        // ==========================================
+        // CRUD ACTIONS: 08 EVENTS
+        // ==========================================
+        function openEventFormModal(item = null) {
+            document.getElementById('event-form-modal').classList.remove('hidden');
+            if (item) {
+                document.getElementById('event-form-title').innerText = "編輯活動";
+                document.getElementById('event-id').value = item.id;
+                document.getElementById('event-title').value = item.title;
+                document.getElementById('event-dateloc').value = item.dateLoc;
+                document.getElementById('event-status').value = item.status;
+                document.getElementById('event-img').value = item.img;
+                document.getElementById('event-desc').value = item.desc;
+            } else {
+                document.getElementById('event-form-title').innerText = "新增活動看板";
+                document.getElementById('event-form').reset();
+                document.getElementById('event-id').value = '';
+            }
+        }
+        function closeEventFormModal() {
+            document.getElementById('event-form-modal').classList.add('hidden');
+        }
+        function editEvent(id) {
+            const item = eventsData.find(e => e.id === id);
+            if (item) openEventFormModal(item);
+        }
+        function deleteEvent(id) {
+            eventsData = eventsData.filter(e => e.id !== id);
+            saveData();
+            showToast("活動已移除");
+        }
+        function handleEventSave(e) {
+            e.preventDefault();
+            const id = document.getElementById('event-id').value;
+            const newItem = {
+                id: id || 'e_' + Date.now(),
+                title: document.getElementById('event-title').value.trim(),
+                dateLoc: document.getElementById('event-dateloc').value.trim(),
+                status: document.getElementById('event-status').value,
+                img: document.getElementById('event-img').value.trim(),
+                desc: document.getElementById('event-desc').value.trim()
+            };
+            if (id) {
+                const idx = eventsData.findIndex(e => e.id === id);
+                if (idx !== -1) eventsData[idx] = newItem;
+            } else {
+                eventsData.unshift(newItem);
+            }
+            saveData();
+            closeEventFormModal();
+            showToast("08 最新活動已儲存！");
+        }
+
+        // Reset All Data
+        function resetDataToDefault() {
+            localStorage.removeItem('mefullon_site_images');
+            localStorage.removeItem('mefullon_products');
+            localStorage.removeItem('mefullon_whyus');
+            localStorage.removeItem('mefullon_knowledge');
+            localStorage.removeItem('mefullon_events');
+            initData();
+            renderAdminLists();
+            showToast("已成功恢復美芙瀧預設圖文範例資料！");
+        }
+
+        // Utility: Escape HTML
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>"']/g, function(m) {
+                return {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#039;'
+                }[m];
+            });
+        }
+
+        // Observer for Fade-Up Animations
+        function observeAnimations() {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+            const observer = new IntersectionObserver((entries, obs) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        obs.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.fade-up').forEach((el) => {
+                observer.observe(el);
+            });
+        }
+
+        // Event Listeners on DOM Ready
+        document.addEventListener('DOMContentLoaded', () => {
+            initData();
+
+            // Navbar scroll handle
+            const navbar = document.getElementById('navbar');
+            const handleScroll = () => {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('glass-nav', 'py-2');
+                    navbar.classList.remove('py-4');
+                } else {
+                    navbar.classList.remove('glass-nav', 'py-2');
+                    navbar.classList.add('py-4');
+                }
+            };
+            window.addEventListener('scroll', handleScroll);
+            handleScroll();
+
+            // Mobile menu toggle
+            const mobileBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (mobileBtn && mobileMenu) {
+                mobileBtn.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                });
+                mobileMenu.querySelectorAll('a').forEach(link => {
+                    link.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+                });
+            }
+        });
+    </script>
+</body>
+</html>
